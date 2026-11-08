@@ -36,19 +36,19 @@ func newAuditHTTPClient(timeout time.Duration) *http.Client {
 	}
 }
 
-// formatTargetURL estandariza el formato de la URL objetivo.
+// formatTargetURL estandariza el formato de la URL objetivo usando la constante httpsPrefix.
 func formatTargetURL(target string) string {
 	target = strings.TrimSpace(target)
-	if !strings.HasPrefix(target, "http://") && !strings.HasPrefix(target, "https://") {
+	if !strings.HasPrefix(target, "http://") && !strings.HasPrefix(target, httpsPrefix) {
 		return httpsPrefix + target
 	}
 	return target
 }
 
-// cleanDomain limpia el dominio para las pruebas de fuerza bruta.
+// cleanDomain limpia el dominio para las pruebas de fuerza bruta usando la constante httpsPrefix.
 func cleanDomain(target string) string {
 	domain := strings.TrimPrefix(target, "http://")
-	domain = strings.TrimPrefix(domain, "https://")
+	domain = strings.TrimPrefix(domain, httpsPrefix)
 	return strings.TrimSuffix(domain, "/")
 }
 
