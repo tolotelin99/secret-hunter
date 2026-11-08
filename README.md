@@ -1,44 +1,55 @@
-# Secret Hunter v22.1
+# [>_<] Secret Hunter
 
-**Secret Hunter** es un framework de reconocimiento ofensivo y auditoría de seguridad automatizada desarrollado en **Go**, diseñado para identificar rápidamente tecnologías, cazar secretos/API keys en el código fuente, realizar fuzzing de rutas, inyectar parámetros vulnerables, enumerar subdominios y generar enlaces directos a repositorios de exploits (Exploit-DB y NIST NVD).
-
----
-
-## Características Principales (6 Fases del Ultimate Full Scan)
-
-1. **Reconocimiento Universal de Stack:** Identifica servidores web, cabeceras `X-Powered-By` (PHP, Java, Node.js) y detección de CMS (WordPress Core).
-2. **Caza Profunda de Secretos (Regex Engine):** Escanea el código fuente en busca de API Keys de Google, AWS, tokens de GitHub, Webhooks de Slack, tokens Bearer y credenciales genéricas.
-3. **Fuzzing de Rutas & Extracción de Parámetros:** Barrido de endpoints críticos de WordPress y aplicaciones web con análisis heurístico de campos de entrada.
-4. **Inyección Automatizada de Parámetros:** Pruebas de payloads orientados a SQL Injection (`SQLi`) y validación de respuestas del servidor.
-5. **Fuerza Bruta Concurrente:** Enumeración multihilo (`goroutines`) de subdominios activos y directorios protegidos.
-6. **Generador de Enlaces de Explotación:** Enlaces directos a bases de datos oficiales de CVEs (NIST NVD) y Exploit-DB basados en los componentes detectados.
+> Herramienta avanzada de reconocimiento, auditoría web y caza de secretos desarrollada en **Go**. Diseñada para profesionales de la ciberseguridad, pentesters y auditores que buscan automatizar fases críticas de descubrimiento y análisis ofensivo.
 
 ---
 
-## Instalación y Requisitos
+## 🚀 Características Principales
 
-Asegúrate de tener instalado **Go** (versión 1.18 o superior) en tu sistema.
+**Secret Hunter** automatiza flujos de trabajo de reconocimiento y análisis mediante una arquitectura concurrente y de alto rendimiento:
 
-1. Clona o clona el repositorio localmente:
-   ```bash
-   git clone [https://github.com/toloteli99/secret-hunter.git](https://github.com/toloteli99/secret-hunter.git)
-   cd secret-hunter
-Inicializa o compila el proyecto:
+1. **[FULL SCAN] Auditoría Masiva Total:** Ejecuta las 6 fases de análisis de forma consecutiva sobre el objetivo.
+2. **Enumeración de Subdominios & Directorios:** Fuerza bruta optimizada con goroutines y sincronización segura (`sync.WaitGroup`).
+3. **Escaneo Universal de Stack:** Identificación de tecnologías web, servidores, cabeceras (`Server`, `X-Powered-By`) y detección de CMS (WordPress Core).
+4. **Caza Profunda de Secretos y API Keys:** Análisis de código fuente mediante expresiones regulares optimizadas para detectar credenciales sensibles:
+   * Google API Keys
+   * AWS Access Key IDs
+   * GitHub Access Tokens
+   * Slack Webhooks
+   * Tokens de autorización (Bearer) y patrones genéricos de contraseñas/API keys.
+5. **Fuzzing de Rutas & Detección de SQLi:** Descubrimiento de endpoints críticos (`/wp-admin/`, `/wp-json/`, archivos de respaldo) e inyección automática de payloads de prueba para inyección SQL.
+6. **Generador de Enlaces a CVEs y Exploit-DB:** Referenciamiento automático de componentes detectados hacia bases de datos oficiales de vulnerabilidades (**NIST NVD** y **Exploit-DB**).
+
+---
+
+## 🛠️ Requisitos previos
+
+* **Go (Golang)**: Versión 1.20 o superior instalada en tu sistema.
+
+---
+
+## 📦 Instalación y Compilación
+
+Clona el repositorio y compila un binario optimizado para producción utilizando las banderas de optimización de Go:
+
+```bash
+# Clonar el repositorio
+git clone [https://github.com/tolotelin99/secret-hunter.git](https://github.com/tolotelin99/secret-hunter.git)
+cd secret-hunter
+
+# Compilar binario optimizado (sin símbolos de depuración ni rutas absolutas)
+go build -ldflags="-s -w" -trimpath -o secret-hunter main.go
+💻 Modo de Uso
+Ejecuta el binario interactivo:
 
 Bash
-go build -o secret-hunter main.go
-
-## Uso
-Puedes ejecutar la herramienta directamente mediante Go:
-
-Bash
-go run main.go
-Al iniciar, se mostrará el menú interactivo con las opciones disponibles:
+./secret-hunter
+Al iniciar, se mostrará el menú principal con las 7 opciones disponibles:
 
 Plaintext
 ========================================================
-   SECRET HUNTER - ULTIMATE FULL SCAN v22.1      
-======================================================
+   [>_<] SECRET HUNTER - ULTIMATE FULL SCAN v22.1      
+========================================================
  1. [FULL SCAN] Auditoría Masiva Total (6 Fases en 1)
  2. Enumeración de Subdominios & Directorios por Fuerza Bruta
  3. Escaneo Masivo Universal (CMS, Stack & Tecnologías)
@@ -47,12 +58,76 @@ Plaintext
  6. Generador Automático de Enlaces a NIST / Exploit-DB
  7. Salir
 ========================================================
-## Tecnologías Utilizadas
-Lenguaje: Go (Golang)
+[>] Selecciona una opción [1-7]: 
+🔒 Calidad de Código y Seguridad
+El proyecto mantiene altos estándares de calidad de código y análisis estático (SonarQube Quality Gate: Passed), asegurando mantenibilidad, ausencia de duplicación de literales y optimización de complejidad cognitiva.
 
-Concurrencia: Goroutines y sync.WaitGroup para escaneos de alta velocidad.
+⚠️ Aviso Legal (Disclaimer)
+Esta herramienta ha sido desarrollada exclusivamente con fines educativos, de investigación y para auditorías de seguridad autorizadas. Los autores no se responsabilizan por el uso indebido o los daños causados por este software. Asegúrate de contar con el consentimiento explícito del propietario antes de auditar cualquier objetivo.
+cat << 'EOF' > README.md
+# [>_<] Secret Hunter
 
-Seguridad: Expresiones regulares (Regex) y cliente HTTP con soporte para omisión de certificados TLS (InsecureSkipVerify).
+> Herramienta avanzada de reconocimiento, auditoría web y caza de secretos desarrollada en **Go**. Diseñada para profesionales de la ciberseguridad, pentesters y auditores que buscan automatizar fases críticas de descubrimiento y análisis ofensivo.
 
-⚖️ Aviso Legal
-Esta herramienta ha sido desarrollada exclusivamente con fines educativos, de investigación y para auditorías de seguridad autorizadas en entornos de prueba (CTFs y laboratorios). El uso no autorizado contra sistemas sin consentimiento explícito es ilegal.
+---
+
+## 🚀 Características Principales
+
+**Secret Hunter** automatiza flujos de trabajo de reconocimiento y análisis mediante una arquitectura concurrente y de alto rendimiento:
+
+1. **[FULL SCAN] Auditoría Masiva Total:** Ejecuta las 6 fases de análisis de forma consecutiva sobre el objetivo.
+2. **Enumeración de Subdominios & Directorios:** Fuerza bruta optimizada con goroutines y sincronización segura (`sync.WaitGroup`).
+3. **Escaneo Universal de Stack:** Identificación de tecnologías web, servidores, cabeceras (`Server`, `X-Powered-By`) y detección de CMS (WordPress Core).
+4. **Caza Profunda de Secretos y API Keys:** Análisis de código fuente mediante expresiones regulares optimizadas para detectar credenciales sensibles:
+   * Google API Keys
+   * AWS Access Key IDs
+   * GitHub Access Tokens
+   * Slack Webhooks
+   * Tokens de autorización (Bearer) y patrones genéricos de contraseñas/API keys.
+5. **Fuzzing de Rutas & Detección de SQLi:** Descubrimiento de endpoints críticos (`/wp-admin/`, `/wp-json/`, archivos de respaldo) e inyección automática de payloads de prueba para inyección SQL.
+6. **Generador de Enlaces a CVEs y Exploit-DB:** Referenciamiento automático de componentes detectados hacia bases de datos oficiales de vulnerabilidades (**NIST NVD** y **Exploit-DB**).
+
+---
+
+## 🛠️ Requisitos previos
+
+* **Go (Golang)**: Versión 1.20 o superior instalada en tu sistema.
+
+---
+
+## 📦 Instalación y Compilación
+
+Clona el repositorio y compila un binario optimizado para producción utilizando las banderas de optimización de Go:
+
+```bash
+# Clonar el repositorio
+git clone [https://github.com/tolotelin99/secret-hunter.git](https://github.com/tolotelin99/secret-hunter.git)
+cd secret-hunter
+
+# Compilar binario optimizado (sin símbolos de depuración ni rutas absolutas)
+go build -ldflags="-s -w" -trimpath -o secret-hunter main.go
+💻 Modo de Uso
+Ejecuta el binario interactivo:
+
+Bash
+./secret-hunter
+Al iniciar, se mostrará el menú principal con las 7 opciones disponibles:
+
+Plaintext
+========================================================
+   [>_<] SECRET HUNTER - ULTIMATE FULL SCAN v22.1      
+========================================================
+ 1. [FULL SCAN] Auditoría Masiva Total (6 Fases en 1)
+ 2. Enumeración de Subdominios & Directorios por Fuerza Bruta
+ 3. Escaneo Masivo Universal (CMS, Stack & Tecnologías)
+ 4. Caza Profunda de Secretos, API Keys & Tokens en HTML/JS
+ 5. Fuzzing Masivo de Rutas & Extracción Automática de Parámetros
+ 6. Generador Automático de Enlaces a NIST / Exploit-DB
+ 7. Salir
+========================================================
+[>] Selecciona una opción [1-7]: 
+🔒 Calidad de Código y Seguridad
+El proyecto mantiene altos estándares de calidad de código y análisis estático (SonarQube Quality Gate: Passed), asegurando mantenibilidad, ausencia de duplicación de literales y optimización de complejidad cognitiva.
+
+⚠️ Aviso Legal (Disclaimer)
+Esta herramienta ha sido desarrollada exclusivamente con fines educativos, de investigación y para auditorías de seguridad autorizadas. Los autores no se responsabilizan por el uso indebido o los daños causados por este software. Asegúrate de contar con el consentimiento explícito del propietario antes de auditar cualquier objetivo.
