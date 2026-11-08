@@ -1,10 +1,10 @@
-# [>_<] Secret Hunter v22.1
+# Secret Hunter v22.1
 
 **Secret Hunter** es un framework de reconocimiento ofensivo y auditoría de seguridad automatizada desarrollado en **Go**, diseñado para identificar rápidamente tecnologías, cazar secretos/API keys en el código fuente, realizar fuzzing de rutas, inyectar parámetros vulnerables, enumerar subdominios y generar enlaces directos a repositorios de exploits (Exploit-DB y NIST NVD).
 
 ---
 
-## 🚀 Características Principales (6 Fases del Ultimate Full Scan)
+## Características Principales (6 Fases del Ultimate Full Scan)
 
 1. **Reconocimiento Universal de Stack:** Identifica servidores web, cabeceras `X-Powered-By` (PHP, Java, Node.js) y detección de CMS (WordPress Core).
 2. **Caza Profunda de Secretos (Regex Engine):** Escanea el código fuente en busca de API Keys de Google, AWS, tokens de GitHub, Webhooks de Slack, tokens Bearer y credenciales genéricas.
@@ -15,7 +15,7 @@
 
 ---
 
-## 📦 Instalación y Requisitos
+## Instalación y Requisitos
 
 Asegúrate de tener instalado **Go** (versión 1.18 o superior) en tu sistema.
 
@@ -27,7 +27,8 @@ Inicializa o compila el proyecto:
 
 Bash
 go build -o secret-hunter main.go
-💻 Uso
+
+## Uso
 Puedes ejecutar la herramienta directamente mediante Go:
 
 Bash
@@ -36,7 +37,7 @@ Al iniciar, se mostrará el menú interactivo con las opciones disponibles:
 
 Plaintext
 ========================================================
-   [>_<] SECRET HUNTER - ULTIMATE FULL SCAN v22.1      
+   SECRET HUNTER - ULTIMATE FULL SCAN v22.1      
 ======================================================
  1. [FULL SCAN] Auditoría Masiva Total (6 Fases en 1)
  2. Enumeración de Subdominios & Directorios por Fuerza Bruta
@@ -46,7 +47,7 @@ Plaintext
  6. Generador Automático de Enlaces a NIST / Exploit-DB
  7. Salir
 ========================================================
-🛠️ Tecnologías Utilizadas
+## Tecnologías Utilizadas
 Lenguaje: Go (Golang)
 
 Concurrencia: Goroutines y sync.WaitGroup para escaneos de alta velocidad.
