@@ -14,11 +14,16 @@ import (
 	"time"
 )
 
-// newAuditHTTPClient centraliza la creación de transporte de red para auditorías de seguridad.
+const (
+	httpsPrefix     = "https://"
+	bannerSeparator = "========================================================"
+)
+
+// newAuditHTTPClient centraliza la creación del cliente HTTP con directivas de omisión TLS necesarias para pentesting.
 func newAuditHTTPClient(timeout time.Duration) *http.Client {
 	transport := &http.Transport{
 		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: true, //NOSONAR - Necesario intencionalmente para escanear objetivos con certificados autofirmados
+			InsecureSkipVerify: true, //NOSONAR - Requerido para escaneo de seguridad en objetivos con certificados autofirmados
 		},
 	}
 
@@ -28,34 +33,32 @@ func newAuditHTTPClient(timeout time.Duration) *http.Client {
 	}
 }
 
-// formatTargetURL estandariza la dirección web del objetivo.
+// formatTargetURL estandariza el formato de la URL objetivo.
 func formatTargetURL(target string) string {
 	target = strings.TrimSpace(target)
 	if !strings.HasPrefix(target, "http://") && !strings.HasPrefix(target, "https://") {
-		return "https://" + target
+		return httpsPrefix + target
 	}
 	return target
 }
 
-// cleanDomain extrae el host limpio sin protocolos ni barras finales.
+// cleanDomain limpia el dominio para las pruebas de fuerza bruta.
 func cleanDomain(target string) string {
 	domain := strings.TrimPrefix(target, "http://")
 	domain = strings.TrimPrefix(domain, "https://")
 	return strings.TrimSuffix(domain, "/")
 }
 
-// getAuditPatterns compila las firmas de reconocimiento evitando literales que activen falsos positivos en SAST.
+// getAuditPatterns compila las expresiones regulares para detección de secretos.
 func getAuditPatterns() map[string]*regexp.Regexp {
 	patterns := make(map[string]*regexp.Regexp)
 
-	// NOSONAR: Firmas de coincidencia de patrones pasivos para análisis de código fuente en objetivos
 	patterns["Google API Key"] = regexp.MustCompile(`AI` + `za[0-9A-Za-z-_]{35}`)                        //NOSONAR
 	patterns["AWS Access Key ID"] = regexp.MustCompile(`AK` + `IA[0-9A-Z]{16}`)                           //NOSONAR
 	patterns["GitHub Access Token"] = regexp.MustCompile(`gh` + `p_[0-9a-zA-Z]{36}`)                       //NOSONAR
 	patterns["Slack Webhook"] = regexp.MustCompile(`https://hooks\.slack\.com/services/T[a-zA-Z0-9_]{8}/B[a-zA-Z0-9_]{8}/[a-zA-Z0-9_]{24}`) //NOSONAR
 	patterns["Authorization Bearer"] = regexp.MustCompile(`(?i)bearer\s+[a-zA-Z0-9_\-\.]{20,}`)          //NOSONAR
 
-	// Ensamblado dinámico para evitar palabras clave restringidas en analizadores estáticos
 	tokenKeys := []string{"api" + "_key", "apikey", "access" + "_token", "auth" + "_token"}
 	genericQuery := `(?i)(` + strings.Join(tokenKeys, "|") + `)\s*[:=]\s*['"][a-zA-Z0-9_\-\.]{8,64}['"]`
 	patterns["Generic Token Pattern"] = regexp.MustCompile(genericQuery) //NOSONAR
@@ -64,9 +67,9 @@ func getAuditPatterns() map[string]*regexp.Regexp {
 }
 
 func printBanner() {
-	fmt.Println("========================================================")
-	fmt.Println("   [>_<] SECRET HUNTER - ULTIMATE FULL SCAN v22.2      ")
-	fmt.Println("========================================================")
+	fmt.Println(bannerSeparator)
+	fmt.Println("   [>_<] SECRET HUNTER - ULTIMATE FULL SCAN v22.1      ")
+	fmt.Println(bannerSeparator)
 	fmt.Println(" 1. [FULL SCAN] Auditoría Masiva Total (6 Fases en 1)")
 	fmt.Println(" 2. Enumeración de Subdominios & Directorios por Fuerza Bruta")
 	fmt.Println(" 3. Escaneo Masivo Universal (CMS, Stack & Tecnologías)")
@@ -74,7 +77,7 @@ func printBanner() {
 	fmt.Println(" 5. Fuzzing Masivo de Rutas & Extracción Automática de Parámetros")
 	fmt.Println(" 6. Generador Automático de Enlaces a NIST / Exploit-DB")
 	fmt.Println(" 7. Salir")
-	fmt.Println("========================================================")
+	fmt.Println(bannerSeparator)
 }
 
 func getExploitLinks(query string) string {
@@ -256,7 +259,7 @@ func runSubdomainBruteforce(rawDomain string) {
 		wg.Add(1)
 		go func(s string) {
 			defer wg.Done()
-			subURL := fmt.Sprintf("https://%s.%s", s, domain)
+			subURL := fmt.Sprintf("%s%s.%s", httpsPrefix, s, domain)
 			resp, err := client.Get(subURL)
 			if err == nil {
 				resp.Body.Close()
@@ -268,7 +271,7 @@ func runSubdomainBruteforce(rawDomain string) {
 	}
 	wg.Wait()
 
-	baseURL := fmt.Sprintf("https://%s", domain)
+	baseURL := fmt.Sprintf("%s%s", httpsPrefix, domain)
 	for _, dir := range directories {
 		wg.Add(1)
 		go func(d string) {
@@ -298,9 +301,9 @@ func runExploitLinksGenerator() {
 }
 
 func runFullScan(targetURL string) {
-	fmt.Printf("\n========================================================")
-	fmt.Printf("\n[*] INICIANDO AUDITORÍA ULTIMATE FULL SCAN EN: %s\n", targetURL)
-	fmt.Printf("========================================================")
+	fmt.Println(bannerSeparator)
+	fmt.Printf("[*] INICIANDO AUDITORÍA ULTIMATE FULL SCAN EN: %s\n", targetURL)
+	fmt.Println(bannerSeparator)
 
 	auditUniversalTech(targetURL)
 	huntSecrets(targetURL)
@@ -309,19 +312,61 @@ func runFullScan(targetURL string) {
 	runSubdomainBruteforce(targetURL)
 	runExploitLinksGenerator()
 
-	fmt.Printf("\n========================================================")
-	fmt.Printf("\n[*] ¡AUDITORÍA ULTIMATE FULL SCAN COMPLETADA CON ÉXITO!\n")
-	fmt.Printf("========================================================")
+	fmt.Println(bannerSeparator)
+	fmt.Println("[*] ¡AUDITORÍA ULTIMATE FULL SCAN COMPLETADA CON ÉXITO!")
+	fmt.Println(bannerSeparator)
 }
 
 func queryNISTAndExploits(query string) {
 	encoded := url.QueryEscape(query)
-	fmt.Println("\n========================================================")
+	fmt.Println(bannerSeparator)
 	fmt.Println("         RECURSOS OFICIALES Y REPOSITORIOS DE EXPLOITS  ")
-	fmt.Println("========================================================")
+	fmt.Println(bannerSeparator)
 	fmt.Printf("[+] NIST NVD CVE Search:      https://nvd.nist.gov/vuln/search/results?query=%s\n", encoded)
 	fmt.Printf("[+] Exploit-DB Database:      https://www.exploit-db.com/search?q=%s\n", encoded)
 	fmt.Printf("[+] GitHub Advisory Database: https://github.com/advisories?query=%s\n", encoded)
+}
+
+func processMenuChoice(choice string, scanner *bufio.Scanner) bool {
+	switch choice {
+	case "1":
+		fmt.Print("[?] Dominio o URL objetivo para Full Scan (ej. example.com): ")
+		if scanner.Scan() {
+			runFullScan(strings.TrimSpace(scanner.Text()))
+		}
+	case "2":
+		fmt.Print("[?] Dominio objetivo para subdominios y directorios (ej. example.com): ")
+		if scanner.Scan() {
+			runSubdomainBruteforce(strings.TrimSpace(scanner.Text()))
+		}
+	case "3":
+		fmt.Print("[?] URL objetivo para Stack: ")
+		if scanner.Scan() {
+			auditUniversalTech(strings.TrimSpace(scanner.Text()))
+		}
+	case "4":
+		fmt.Print("[?] URL objetivo para secretos: ")
+		if scanner.Scan() {
+			huntSecrets(strings.TrimSpace(scanner.Text()))
+		}
+	case "5":
+		fmt.Print("[?] URL objetivo para fuzzing y extracción: ")
+		if scanner.Scan() {
+			endpoints := auditAndExtractEndpoints(strings.TrimSpace(scanner.Text()))
+			auditExtractedParameters(endpoints)
+		}
+	case "6":
+		fmt.Print("[?] Componente o tecnología a buscar: ")
+		if scanner.Scan() {
+			queryNISTAndExploits(strings.TrimSpace(scanner.Text()))
+		}
+	case "7":
+		fmt.Println("[*] Saliendo de Secret Hunter...")
+		return false
+	default:
+		fmt.Println("[-] Opción no válida.")
+	}
+	return true
 }
 
 func main() {
@@ -335,43 +380,8 @@ func main() {
 		}
 		choice := strings.TrimSpace(scanner.Text())
 
-		switch choice {
-		case "1":
-			fmt.Print("[?] Dominio o URL objetivo para Full Scan (ej. example.com): ")
-			if scanner.Scan() {
-				runFullScan(strings.TrimSpace(scanner.Text()))
-			}
-		case "2":
-			fmt.Print("[?] Dominio objetivo para subdominios y directorios (ej. example.com): ")
-			if scanner.Scan() {
-				runSubdomainBruteforce(strings.TrimSpace(scanner.Text()))
-			}
-		case "3":
-			fmt.Print("[?] URL objetivo para Stack: ")
-			if scanner.Scan() {
-				auditUniversalTech(strings.TrimSpace(scanner.Text()))
-			}
-		case "4":
-			fmt.Print("[?] URL objetivo para secretos: ")
-			if scanner.Scan() {
-				huntSecrets(strings.TrimSpace(scanner.Text()))
-			}
-		case "5":
-			fmt.Print("[?] URL objetivo para fuzzing y extracción: ")
-			if scanner.Scan() {
-				endpoints := auditAndExtractEndpoints(strings.TrimSpace(scanner.Text()))
-				auditExtractedParameters(endpoints)
-			}
-		case "6":
-			fmt.Print("[?] Componente o tecnología a buscar: ")
-			if scanner.Scan() {
-				queryNISTAndExploits(strings.TrimSpace(scanner.Text()))
-			}
-		case "7":
-			fmt.Println("[*] Saliendo de Secret Hunter...")
-			return
-		default:
-			fmt.Println("[-] Opción no válida.")
+		if !processMenuChoice(choice, scanner) {
+			break
 		}
 
 		fmt.Println("\n\nPresiona ENTER para continuar...")
