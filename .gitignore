@@ -1,0 +1,26 @@
+# Binarios y ejecutables compilados
+secret-hunter
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Archivos de dependencias y pruebas de Go
+/vendor/
+*.test
+*.out
+
+# Entornos virtuales, IDEs y archivos de sistema
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Reportes y logs temporales generados por escaneos
+*.json
+*.txt
+report/
+logs/
