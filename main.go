@@ -15,8 +15,11 @@ import (
 )
 
 const (
-	httpsPrefix     = "https://"
-	bannerSeparator = "========================================================"
+	httpsPrefix          = "https://"
+	bannerSeparator      = "========================================================"
+	exploitDBURLTemplate = "https://www.exploit-db.com/search?q=%s"
+	nistNVDURLTemplate   = "https://nvd.nist.gov/vuln/search/results?query=%s"
+	githubAdvisoryURL    = "https://github.com/advisories?query=%s"
 )
 
 // newAuditHTTPClient centraliza la creación del cliente HTTP con directivas de omisión TLS necesarias para pentesting.
@@ -82,7 +85,7 @@ func printBanner() {
 
 func getExploitLinks(query string) string {
 	encoded := url.QueryEscape(query)
-	return fmt.Sprintf("Exploit-DB: https://www.exploit-db.com/search?q=%s | NIST NVD: https://nvd.nist.gov/vuln/search/results?query=%s", encoded, encoded)
+	return fmt.Sprintf("Exploit-DB: "+exploitDBURLTemplate+" | NIST NVD: "+nistNVDURLTemplate, encoded, encoded)
 }
 
 func auditUniversalTech(targetURL string) {
@@ -322,9 +325,9 @@ func queryNISTAndExploits(query string) {
 	fmt.Println(bannerSeparator)
 	fmt.Println("         RECURSOS OFICIALES Y REPOSITORIOS DE EXPLOITS  ")
 	fmt.Println(bannerSeparator)
-	fmt.Printf("[+] NIST NVD CVE Search:      https://nvd.nist.gov/vuln/search/results?query=%s\n", encoded)
-	fmt.Printf("[+] Exploit-DB Database:      https://www.exploit-db.com/search?q=%s\n", encoded)
-	fmt.Printf("[+] GitHub Advisory Database: https://github.com/advisories?query=%s\n", encoded)
+	fmt.Printf("[+] NIST NVD CVE Search:      "+nistNVDURLTemplate+"\n", encoded)
+	fmt.Printf("[+] Exploit-DB Database:      "+exploitDBURLTemplate+"\n", encoded)
+	fmt.Printf("[+] GitHub Advisory Database: "+githubAdvisoryURL+"\n", encoded)
 }
 
 func processMenuChoice(choice string, scanner *bufio.Scanner) bool {
